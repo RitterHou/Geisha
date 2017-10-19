@@ -14,6 +14,8 @@ import java.util.List;
  */
 public class Context {
 
+    // 创建 -> 保存 -> 获取 -> 使用
+
     public Context() {
         List<Class> classes = Utils.getAllClass();
         // 扫描并且创建bean，把bean保存到内存中

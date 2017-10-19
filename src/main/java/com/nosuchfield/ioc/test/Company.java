@@ -15,10 +15,6 @@ public class Company {
     @Resource
     private String name;
 
-    public void setPerson(Person person) {
-        this.person = person;
-    }
-
     public void test() {
         System.out.println(person + " hate " + name);
     }
