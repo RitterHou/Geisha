@@ -10,9 +10,9 @@ import java.util.List;
 public class Utils {
 
     private static String root = Utils.class.getClassLoader().getResource("").getPath();
-    private static List<String> classes;
+    private static List<Class> classes;
 
-    public static List<String> getAllClassName() {
+    public static List<Class> getAllClass() {
         classes = new ArrayList<>();
         listFilesForFolder(new File(root));
         return classes;
@@ -24,14 +24,20 @@ public class Utils {
                 listFilesForFolder(file);
             } else {
                 String path = file.getPath();
-                if (path.endsWith(".class"))
-                    classes.add(path.replaceAll(root, "").replaceAll("/", ".").replaceAll(".class", ""));
+                if (path.endsWith(".class")) {
+                    String classPath = path.replaceAll(root, "").replaceAll("/", ".").replaceAll(".class", "");
+                    try {
+                        classes.add(Class.forName(classPath));
+                    } catch (ClassNotFoundException e) {
+                        e.printStackTrace();
+                    }
+                }
             }
         }
     }
 
     public static void main(String[] args) throws Exception {
-        System.out.println(Utils.getAllClassName());
+        System.out.println(Utils.getAllClass());
     }
 
 }
