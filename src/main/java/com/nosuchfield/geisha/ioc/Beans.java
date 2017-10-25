@@ -1,4 +1,4 @@
-package com.nosuchfield.ioc;
+package com.nosuchfield.geisha.ioc;
 
 import java.util.HashMap;
 import java.util.Map;

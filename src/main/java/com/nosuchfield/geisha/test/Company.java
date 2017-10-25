@@ -1,7 +1,7 @@
-package com.nosuchfield.ioc.test;
+package com.nosuchfield.geisha.test;
 
-import com.nosuchfield.ioc.annotations.Component;
-import com.nosuchfield.ioc.annotations.Resource;
+import com.nosuchfield.geisha.annotations.Component;
+import com.nosuchfield.geisha.annotations.Resource;
 
 /**
  * @author hourui 2017/10/18 20:59

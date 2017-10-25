@@ -1,4 +1,4 @@
-package com.nosuchfield.ioc;
+package com.nosuchfield.geisha;
 
 /**
  * @author hourui 2017/10/18 19:42

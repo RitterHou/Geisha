@@ -1,6 +1,7 @@
-package com.nosuchfield.ioc;
+package com.nosuchfield.geisha;
 
-import com.nosuchfield.ioc.test.Company;
+import com.nosuchfield.geisha.ioc.Context;
+import com.nosuchfield.geisha.test.Company;
 
 /**
  * @author hourui 2017/10/18 19:26

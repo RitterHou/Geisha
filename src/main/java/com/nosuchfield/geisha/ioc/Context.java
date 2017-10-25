@@ -1,9 +1,10 @@
-package com.nosuchfield.ioc;
+package com.nosuchfield.geisha.ioc;
 
-import com.nosuchfield.ioc.annotations.Bean;
-import com.nosuchfield.ioc.annotations.Component;
-import com.nosuchfield.ioc.annotations.Configuration;
-import com.nosuchfield.ioc.annotations.Resource;
+import com.nosuchfield.geisha.Utils;
+import com.nosuchfield.geisha.annotations.Bean;
+import com.nosuchfield.geisha.annotations.Component;
+import com.nosuchfield.geisha.annotations.Configuration;
+import com.nosuchfield.geisha.annotations.Resource;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;

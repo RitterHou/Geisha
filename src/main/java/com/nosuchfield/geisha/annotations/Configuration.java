@@ -1,4 +1,4 @@
-package com.nosuchfield.ioc.annotations;
+package com.nosuchfield.geisha.annotations;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -8,7 +8,7 @@ import java.lang.annotation.Target;
 /**
  * @author hourui 2017/10/19 16:15
  */
-@Target({ElementType.METHOD})
+@Target({ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
-public @interface Bean {
+public @interface Configuration {
 }
