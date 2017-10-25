@@ -1,7 +1,7 @@
 package com.nosuchfield.geisha.test;
 
-import com.nosuchfield.geisha.annotations.Bean;
-import com.nosuchfield.geisha.annotations.Configuration;
+import com.nosuchfield.geisha.ioc.annotations.Bean;
+import com.nosuchfield.geisha.ioc.annotations.Configuration;
 
 /**
  * @author hourui 2017/10/19 16:27

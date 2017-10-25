@@ -1,4 +1,4 @@
-package com.nosuchfield.geisha;
+package com.nosuchfield.geisha.utils;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -6,11 +6,13 @@ import java.util.List;
 import java.util.regex.Matcher;
 
 /**
+ * 获取环境变量下的所有的包下面的所有的class
+ *
  * @author hourui 2017/10/18 19:37
  */
-public class Utils {
+public class PackageListUtils {
 
-    private static String root = Utils.class.getClassLoader().getResource("").getPath(); // CLASSPATH
+    private static String root = PackageListUtils.class.getClassLoader().getResource("").getPath(); // CLASSPATH
     private static String separator = File.separator; // 分隔符
     private static List<Class> classes;
 
@@ -45,7 +47,7 @@ public class Utils {
     }
 
     public static void main(String[] args) throws Exception {
-        System.out.println(Utils.getAllClass());
+        System.out.println(PackageListUtils.getAllClass());
     }
 
 }

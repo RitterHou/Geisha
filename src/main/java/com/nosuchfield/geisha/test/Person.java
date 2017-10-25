@@ -1,6 +1,6 @@
 package com.nosuchfield.geisha.test;
 
-import com.nosuchfield.geisha.annotations.Component;
+import com.nosuchfield.geisha.ioc.annotations.Component;
 
 /**
  * @author hourui 2017/10/18 20:59

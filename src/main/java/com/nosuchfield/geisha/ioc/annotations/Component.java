@@ -1,4 +1,4 @@
-package com.nosuchfield.geisha.annotations;
+package com.nosuchfield.geisha.ioc.annotations;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

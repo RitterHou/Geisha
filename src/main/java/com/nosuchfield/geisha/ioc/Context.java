@@ -1,10 +1,10 @@
 package com.nosuchfield.geisha.ioc;
 
-import com.nosuchfield.geisha.Utils;
-import com.nosuchfield.geisha.annotations.Bean;
-import com.nosuchfield.geisha.annotations.Component;
-import com.nosuchfield.geisha.annotations.Configuration;
-import com.nosuchfield.geisha.annotations.Resource;
+import com.nosuchfield.geisha.utils.PackageListUtils;
+import com.nosuchfield.geisha.ioc.annotations.Bean;
+import com.nosuchfield.geisha.ioc.annotations.Component;
+import com.nosuchfield.geisha.ioc.annotations.Configuration;
+import com.nosuchfield.geisha.ioc.annotations.Resource;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -18,7 +18,7 @@ public class Context {
     // 创建 -> 保存 -> 获取 -> 使用
 
     public Context() {
-        List<Class> classes = Utils.getAllClass();
+        List<Class> classes = PackageListUtils.getAllClass();
         // 扫描并且创建bean，把bean保存到内存中
         classes.forEach(clazz -> {
             try {
