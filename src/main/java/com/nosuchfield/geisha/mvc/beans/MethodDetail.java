@@ -18,6 +18,7 @@ public class MethodDetail {
 
     private String url;
     private RequestMethod requestMethod;
+    private Class clazz;
     private Method method;
 
 }

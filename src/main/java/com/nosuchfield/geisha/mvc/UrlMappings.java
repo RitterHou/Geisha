@@ -27,9 +27,10 @@ public class UrlMappings {
         return null;
     }
 
-    public void setMap(String url, Method method, RequestMethod requestMethod) {
+    public void setMap(String url, Class clazz, Method method, RequestMethod requestMethod) {
         MethodDetail methodDetail = MethodDetail.builder()
                 .url(url)
+                .clazz(clazz)
                 .method(method)
                 .requestMethod(requestMethod)
                 .build();

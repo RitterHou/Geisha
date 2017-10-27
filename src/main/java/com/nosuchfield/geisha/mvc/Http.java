@@ -30,7 +30,7 @@ public class Http {
                     RequestMethod requestMethod = requestMapping.method(); // 只看方法上的HTTP METHOD
 
                     methodUrl = classUrl == null ? methodUrl : classUrl + methodUrl;
-                    UrlMappings.getInstance().setMap(methodUrl, method, requestMethod);
+                    UrlMappings.getInstance().setMap(methodUrl, clazz, method, requestMethod);
                 }
             }
         }
