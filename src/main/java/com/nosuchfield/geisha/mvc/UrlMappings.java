@@ -1,7 +1,11 @@
 package com.nosuchfield.geisha.mvc;
 
-import java.util.HashMap;
-import java.util.Map;
+import com.nosuchfield.geisha.mvc.beans.MethodDetail;
+import com.nosuchfield.geisha.mvc.enums.RequestMethod;
+
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.List;
 
 public class UrlMappings {
 
@@ -13,14 +17,28 @@ public class UrlMappings {
         return urlMappings;
     }
 
-    private Map<String, Object> map = new HashMap<>();
+    private List<MethodDetail> methodDetails = new ArrayList<>();
 
-    public Object getObject(String url) {
-        return map.get(url);
+    public MethodDetail getMap(String url, RequestMethod requestMethod) {
+        for (MethodDetail methodDetail : methodDetails) {
+            if (methodDetail.getUrl().equals(url) && methodDetail.getRequestMethod() == requestMethod)
+                return methodDetail;
+        }
+        return null;
     }
 
-    public void setObject(String url, Object object) {
-        map.put(url, object);
+    public void setMap(String url, Method method, RequestMethod requestMethod) {
+        MethodDetail methodDetail = MethodDetail.builder()
+                .url(url)
+                .method(method)
+                .requestMethod(requestMethod)
+                .build();
+
+        methodDetails.add(methodDetail);
+    }
+
+    public void setMap(String url, MethodDetail methodDetail) {
+        methodDetails.add(methodDetail);
     }
 
 }

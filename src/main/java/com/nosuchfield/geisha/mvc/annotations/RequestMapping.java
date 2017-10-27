@@ -1,6 +1,6 @@
 package com.nosuchfield.geisha.mvc.annotations;
 
-import com.nosuchfield.geisha.mvc.enums.Method;
+import com.nosuchfield.geisha.mvc.enums.RequestMethod;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -13,5 +13,5 @@ public @interface RequestMapping {
 
     String value() default "/"; // 默认访问根目录
 
-    Method method() default Method.GET;
+    RequestMethod method() default RequestMethod.GET;
 }
