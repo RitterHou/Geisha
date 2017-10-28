@@ -14,8 +14,8 @@ import com.nosuchfield.geisha.utils.Constants;
 import com.nosuchfield.geisha.utils.RequestUtils;
 
 import java.io.IOException;
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
-import java.lang.reflect.Parameter;
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
 import java.nio.channels.SelectionKey;
@@ -99,7 +99,6 @@ public class Server {
         String url = httpRequest.getUrl();
         RequestMethod requestMethod = httpRequest.getRequestMethod();
         MethodDetail methodDetail = UrlMappings.getInstance().getMap(url, requestMethod);
-        System.out.println(methodDetail);
 
         // 如果找不到对应的匹配规则
         if (methodDetail == null)
@@ -113,9 +112,18 @@ public class Server {
         Map<String, String> requestParam = httpRequest.getParams(); // 请求参数
         List<String> params = new ArrayList<>(); // 最终的方法参数
         Method method = methodDetail.getMethod();
-        for (Parameter parameter : method.getParameters()) {
-            String name = parameter.getAnnotationsByType(Param.class)[0]..memberValues.get("value")
-            System.out.println(parameter);
+
+        // 获取方法上所有参数的所有注解
+        Annotation[][] annotations = method.getParameterAnnotations();
+        for (Annotation[] annotation : annotations) {
+            String name = null;
+            for (Annotation ann : annotation) {
+                if (ann.annotationType() == Param.class) {
+                    Param param = (Param) ann;
+                    name = param.value();
+                    break;
+                }
+            }
             // 如果请求参数中存在这个参数就把该值赋给方法参数，否则赋值null
             params.add(requestParam.getOrDefault(name, null));
         }
