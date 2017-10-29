@@ -10,4 +10,6 @@ public class Constants {
             "<h1>Not Found</h1>\n" +
             "<p>The requested URL was not found on the server.  If you entered the URL manually please check your spelling and try again.</p>\n";
 
+    public static final String DEFAULT_ENCODING = "UTF-8";
+
 }

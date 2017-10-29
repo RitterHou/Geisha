@@ -73,7 +73,7 @@ public class Server {
             } else if (key.isReadable()) {
                 client = (SocketChannel) key.channel();
                 read(client);
-                // key.cancel();
+//                 key.cancel();
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -85,6 +85,12 @@ public class Server {
         LinkedList<Byte> list = new LinkedList<>();
         ByteBuffer buf = ByteBuffer.allocate(1024);
         int bytesRead = channel.read(buf);
+        // 如果读取到-1，则说明客户端关闭了该链接
+        if (bytesRead == -1) {
+            System.out.println(channel + " closed");
+            channel.close();
+            return;
+        }
         while (bytesRead > 0) {
             buf.flip();
             while (buf.hasRemaining()) {
@@ -93,7 +99,20 @@ public class Server {
             buf.clear();
             bytesRead = channel.read(buf);
         }
-        String request = new String(Bytes.toArray(list), "utf-8");
+        String request = new String(Bytes.toArray(list), Constants.DEFAULT_ENCODING);
+        try {
+            // 写回响应
+            response(request, channel);
+        } catch (Exception e) {
+            e.printStackTrace();
+            serverError(e.toString(), channel);
+        }
+    }
+
+    /**
+     * 解析请求并返回响应
+     */
+    private void response(String request, SocketChannel channel) throws Exception {
         HttpRequest httpRequest = RequestUtils.getRequest(request);
 
         String url = httpRequest.getUrl();
@@ -101,8 +120,10 @@ public class Server {
         MethodDetail methodDetail = UrlMappings.getInstance().getMap(url, requestMethod);
 
         // 如果找不到对应的匹配规则
-        if (methodDetail == null)
+        if (methodDetail == null) {
             notFound(channel);
+            return;
+        }
 
         Class clazz = methodDetail.getClazz();
         Object object = Beans.getInstance().getObject(clazz);
@@ -132,15 +153,16 @@ public class Server {
 
         // 写回响应
         String str = (String) result;
-        String response = "HTTP/1.1 200 OK\r\nContent-Length: " + str.length() + "\r\n\r\n" + str;
-//        System.out.println(response);
-        ByteBuffer res = ByteBuffer.allocate(response.length());
-        res.clear();
-        res.put(response.getBytes());
-        res.flip();
-        while (res.hasRemaining()) {
-            channel.write(res);
-        }
+        String response = "HTTP/1.1 200 OK\r\n\r\nContent-Length: " + str.getBytes().length + "\r\n\r\n" + str;
+        writeData(response, channel);
+    }
+
+    /**
+     * 500 Internal Server Error
+     */
+    private void serverError(String error, SocketChannel channel) {
+        String response = "HTTP/1.1 500 Internal Server Error\r\nContent-Length: " + error.getBytes().length + "\r\n\r\n" + error;
+        writeData(response, channel);
     }
 
     /**
@@ -148,14 +170,28 @@ public class Server {
      */
     private void notFound(SocketChannel channel) throws IOException {
         String str = Constants.NOT_FOUND;
-        String response = "HTTP/1.1 404 Not Found\r\nContent-Length: " + str.length() + "\r\n\r\n" + str;
-        System.out.println(response);
-        ByteBuffer res = ByteBuffer.allocate(response.length());
+        String response = "HTTP/1.1 404 Not Found\r\nContent-Length: " + str.getBytes().length + "\r\n\r\n" + str;
+        writeData(response, channel);
+    }
+
+    /**
+     * 向连接中写数据
+     *
+     * @param data    数据
+     * @param channel 连接
+     */
+    private void writeData(String data, SocketChannel channel) {
+        ByteBuffer res = ByteBuffer.allocate(data.getBytes().length);
         res.clear();
-        res.put(response.getBytes());
+        res.put(data.getBytes());
         res.flip();
         while (res.hasRemaining()) {
-            channel.write(res);
+            try {
+                channel.write(res);
+            } catch (IOException e) {
+                System.out.println("error when writing data");
+                e.printStackTrace();
+            }
         }
     }
 }

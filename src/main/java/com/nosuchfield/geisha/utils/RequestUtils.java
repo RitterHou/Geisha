@@ -127,7 +127,7 @@ public class RequestUtils {
                 idx = cmd[1].indexOf('?');
                 if (idx < 0) url = cmd[1];
                 else {
-                    url = URLDecoder.decode(cmd[1].substring(0, idx), "ISO-8859-1");
+                    url = URLDecoder.decode(cmd[1].substring(0, idx), Constants.DEFAULT_ENCODING);
                     prms = cmd[1].substring(idx + 1).split("&");
 
                     params = new Hashtable();
@@ -135,12 +135,12 @@ public class RequestUtils {
                         temp = prms[i].split("=");
                         if (temp.length == 2) {
                             // we use ISO-8859-1 as temporary charset and then
-                            // String.getBytes("ISO-8859-1") to get the data
-                            params.put(URLDecoder.decode(temp[0], "ISO-8859-1"),
-                                    URLDecoder.decode(temp[1], "ISO-8859-1"));
+                            // String.getBytes(Constants.DEFAULT_ENCODING) to get the data
+                            params.put(URLDecoder.decode(temp[0], Constants.DEFAULT_ENCODING),
+                                    URLDecoder.decode(temp[1], Constants.DEFAULT_ENCODING));
                         } else if (temp.length == 1 && prms[i].indexOf('=') == prms[i].length() - 1) {
                             // handle empty string separatedly
-                            params.put(URLDecoder.decode(temp[0], "ISO-8859-1"), "");
+                            params.put(URLDecoder.decode(temp[0], Constants.DEFAULT_ENCODING), "");
                         }
                     }
                 }
