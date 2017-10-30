@@ -46,8 +46,4 @@ public class PackageListUtils {
         }
     }
 
-    public static void main(String[] args) throws Exception {
-        System.out.println(PackageListUtils.getAllClass());
-    }
-
 }
