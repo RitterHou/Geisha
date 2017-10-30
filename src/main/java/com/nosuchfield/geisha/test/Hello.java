@@ -11,9 +11,8 @@ import com.nosuchfield.geisha.mvc.annotations.RequestMapping;
 public class Hello {
 
     @RequestMapping
-    public String hello(@Param("name") String name) {
-        System.out.println("我的名字是：" + name);
-        return "hello, " + name;
+    public String hello(@Param("name") String name, @Param("age") String age) {
+        return "hello " + name + ", your age is " + Integer.valueOf(age);
     }
 
 }

@@ -14,6 +14,9 @@ import com.nosuchfield.geisha.utils.Constants;
 import com.nosuchfield.geisha.utils.RequestUtils;
 
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.io.UnsupportedEncodingException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.net.InetSocketAddress;
@@ -39,6 +42,7 @@ public class Server {
                 Server server = new Server();
                 server.port = port;
                 server.start();
+                System.out.println("server is binding port " + port);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -69,6 +73,7 @@ public class Server {
                     client.configureBlocking(false);
                     // 给新的链接注册读取事件
                     client.register(selector, SelectionKey.OP_READ);
+                    System.out.println(client + " opened");
                 }
             } else if (key.isReadable()) {
                 client = (SocketChannel) key.channel();
@@ -91,6 +96,7 @@ public class Server {
             channel.close();
             return;
         }
+        // 读取所有的数据
         while (bytesRead > 0) {
             buf.flip();
             while (buf.hasRemaining()) {
@@ -105,7 +111,11 @@ public class Server {
             response(request, channel);
         } catch (Exception e) {
             e.printStackTrace();
-            serverError(e.toString(), channel);
+            // 返回错误信息
+            StringWriter stringWriter = new StringWriter();
+            PrintWriter printWriter = new PrintWriter(stringWriter);
+            e.printStackTrace(printWriter);
+            serverError(stringWriter.toString(), channel);
         }
     }
 
@@ -153,15 +163,17 @@ public class Server {
 
         // 写回响应
         String str = (String) result;
-        String response = "HTTP/1.1 200 OK\r\n\r\nContent-Length: " + str.getBytes().length + "\r\n\r\n" + str;
+        String response = "HTTP/1.1 200 OK" + Constants.CRLF + "Content-Length: "
+                + str.getBytes(Constants.DEFAULT_ENCODING).length + Constants.CRLF_2 + str;
         writeData(response, channel);
     }
 
     /**
      * 500 Internal Server Error
      */
-    private void serverError(String error, SocketChannel channel) {
-        String response = "HTTP/1.1 500 Internal Server Error\r\nContent-Length: " + error.getBytes().length + "\r\n\r\n" + error;
+    private void serverError(String error, SocketChannel channel) throws UnsupportedEncodingException {
+        String response = "HTTP/1.1 500 Internal Server Error" + Constants.CRLF + "Content-Length: "
+                + error.getBytes(Constants.DEFAULT_ENCODING).length + Constants.CRLF_2 + error;
         writeData(response, channel);
     }
 
@@ -170,7 +182,8 @@ public class Server {
      */
     private void notFound(SocketChannel channel) throws IOException {
         String str = Constants.NOT_FOUND;
-        String response = "HTTP/1.1 404 Not Found\r\nContent-Length: " + str.getBytes().length + "\r\n\r\n" + str;
+        String response = "HTTP/1.1 404 Not Found" + Constants.CRLF + "Content-Length: "
+                + str.getBytes(Constants.DEFAULT_ENCODING).length + Constants.CRLF_2 + str;
         writeData(response, channel);
     }
 
@@ -180,10 +193,10 @@ public class Server {
      * @param data    数据
      * @param channel 连接
      */
-    private void writeData(String data, SocketChannel channel) {
-        ByteBuffer res = ByteBuffer.allocate(data.getBytes().length);
+    private void writeData(String data, SocketChannel channel) throws UnsupportedEncodingException {
+        ByteBuffer res = ByteBuffer.allocate(data.getBytes(Constants.DEFAULT_ENCODING).length);
         res.clear();
-        res.put(data.getBytes());
+        res.put(data.getBytes(Constants.DEFAULT_ENCODING));
         res.flip();
         while (res.hasRemaining()) {
             try {
