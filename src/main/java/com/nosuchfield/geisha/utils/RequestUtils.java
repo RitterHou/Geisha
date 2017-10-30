@@ -10,6 +10,8 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
+ * 解析HTTP请求
+ *
  * @author hourui 2017/10/27 21:23
  */
 public class RequestUtils {

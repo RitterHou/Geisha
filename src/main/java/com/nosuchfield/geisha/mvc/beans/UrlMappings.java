@@ -1,6 +1,5 @@
-package com.nosuchfield.geisha.mvc;
+package com.nosuchfield.geisha.mvc.beans;
 
-import com.nosuchfield.geisha.mvc.beans.MethodDetail;
 import com.nosuchfield.geisha.mvc.enums.RequestMethod;
 
 import java.lang.reflect.Method;

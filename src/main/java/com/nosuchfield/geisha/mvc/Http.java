@@ -1,6 +1,7 @@
 package com.nosuchfield.geisha.mvc;
 
 import com.nosuchfield.geisha.mvc.annotations.RequestMapping;
+import com.nosuchfield.geisha.mvc.beans.UrlMappings;
 import com.nosuchfield.geisha.mvc.enums.RequestMethod;
 import com.nosuchfield.geisha.utils.PackageListUtils;
 

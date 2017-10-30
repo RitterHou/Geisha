@@ -3,8 +3,7 @@ package com.nosuchfield.geisha.mvc;
 import com.google.common.primitives.Bytes;
 import com.nosuchfield.geisha.ioc.Beans;
 import com.nosuchfield.geisha.mvc.annotations.Param;
-import com.nosuchfield.geisha.mvc.beans.HttpRequest;
-import com.nosuchfield.geisha.mvc.beans.MethodDetail;
+import com.nosuchfield.geisha.mvc.beans.*;
 import com.nosuchfield.geisha.mvc.enums.RequestMethod;
 import com.nosuchfield.geisha.utils.Constants;
 import com.nosuchfield.geisha.utils.RequestUtils;
@@ -33,6 +32,9 @@ import java.util.Map;
  */
 @Slf4j
 public class Server {
+
+    private SessionRepository sessionRepository = new SessionRepository();
+
     private int port = 5200;
     private Selector selector;
 
@@ -57,12 +59,9 @@ public class Server {
         selector = Selector.open();
         serverSocketChannel.register(selector, SelectionKey.OP_ACCEPT);
         while (true) {
-            int updatedKeys = selector.select(); // 此处的select方法是阻塞的
-            // 有key的状态被更新了
-            if (updatedKeys > 0) {
-                // 对所有的key做一次遍历，由key本身判断此事件是否与自己有关
-                selector.selectedKeys().forEach((this::handleKey));
-            }
+            selector.select(); // 此处的select方法是阻塞的
+            // 对所有的key做一次遍历，由key本身判断此事件是否与自己有关
+            selector.selectedKeys().forEach((this::handleKey));
         }
     }
 
@@ -145,12 +144,28 @@ public class Server {
             throw new RuntimeException("can't find bean for " + clazz);
 
         Map<String, String> requestParam = httpRequest.getParams(); // 请求参数
-        List<String> params = new ArrayList<>(); // 最终的方法参数
+        List<Object> params = new ArrayList<>(); // 最终的方法参数
         Method method = methodDetail.getMethod();
+
+        String newCookie = ""; // 要设置给浏览器的cookie
 
         // 获取方法的所有的参数
         Parameter[] parameters = method.getParameters();
         for (Parameter parameter : parameters) {
+            // 检测参数是否是Session类型，如果是就获取Session并传入
+            if (parameter.getType() == Session.class) {
+                String cookie = httpRequest.getCookie("geisha");
+                Session session = sessionRepository.get(cookie);
+                if (session == null) {
+                    String geisha = sessionRepository.createSession();
+                    session = sessionRepository.get(geisha);
+
+                    newCookie = "Set-Cookie: geisha=" + geisha + "; HttpOnly" + Constants.CRLF;
+                }
+                params.add(session);
+                continue;
+            }
+
             String name = null;
             // 获取参数上所有的注解
             Annotation[] annotations = parameter.getAnnotations();
@@ -169,7 +184,7 @@ public class Server {
 
         // 写回响应
         String str = (String) result;
-        String response = "HTTP/1.1 200 OK" + Constants.CRLF + "Content-Length: "
+        String response = "HTTP/1.1 200 OK" + Constants.CRLF + newCookie + "Content-Length: "
                 + str.getBytes(Constants.DEFAULT_ENCODING).length + Constants.CRLF_2 + str;
         writeData(response, channel);
     }
