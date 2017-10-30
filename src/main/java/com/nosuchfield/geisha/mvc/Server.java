@@ -57,12 +57,9 @@ public class Server {
         selector = Selector.open();
         serverSocketChannel.register(selector, SelectionKey.OP_ACCEPT);
         while (true) {
-            int updatedKeys = selector.select(); // 此处的select方法是阻塞的
-            // 有key的状态被更新了
-            if (updatedKeys > 0) {
-                // 对所有的key做一次遍历，由key本身判断此事件是否与自己有关
-                selector.selectedKeys().forEach((this::handleKey));
-            }
+            selector.select(); // 此处的select方法是阻塞的
+            // 对所有的key做一次遍历，由key本身判断此事件是否与自己有关
+            selector.selectedKeys().forEach((this::handleKey));
         }
     }
 
