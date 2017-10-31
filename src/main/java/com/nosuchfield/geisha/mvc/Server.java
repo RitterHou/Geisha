@@ -33,7 +33,7 @@ import java.util.Map;
  */
 @Slf4j
 public class Server {
-    private int port = 5200;
+    private int port;
     private Selector selector;
 
     public static void start(int port) {
