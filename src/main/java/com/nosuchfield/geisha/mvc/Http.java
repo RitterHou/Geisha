@@ -3,10 +3,12 @@ package com.nosuchfield.geisha.mvc;
 import com.nosuchfield.geisha.mvc.annotations.RequestMapping;
 import com.nosuchfield.geisha.mvc.enums.RequestMethod;
 import com.nosuchfield.geisha.utils.PackageListUtils;
+import lombok.extern.slf4j.Slf4j;
 
 import java.lang.reflect.Method;
 import java.util.List;
 
+@Slf4j
 public class Http {
 
     /**
@@ -30,6 +32,7 @@ public class Http {
                     RequestMethod requestMethod = requestMapping.method(); // 只看方法上的HTTP METHOD
 
                     methodUrl = classUrl == null ? methodUrl : classUrl + methodUrl;
+                    log.info("Mapped URL [{} {}] onto handler of type [{}]", requestMethod.getValue(), methodUrl, method);
                     UrlMappings.getInstance().setMap(methodUrl, clazz, method, requestMethod);
                 }
             }

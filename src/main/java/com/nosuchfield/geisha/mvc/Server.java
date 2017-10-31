@@ -41,7 +41,7 @@ public class Server {
             try {
                 Server server = new Server();
                 server.port = port;
-                log.info("server is running on port {}", port);
+                log.info("Server is running on http://127.0.0.1:{}", port);
                 server.start();
             } catch (Exception e) {
                 e.printStackTrace();
@@ -74,7 +74,7 @@ public class Server {
                     client.configureBlocking(false);
                     // 给新的链接注册读取事件
                     client.register(selector, SelectionKey.OP_READ);
-                    log.info("{} opened", client);
+                    log.info("Open channel {}", client.getRemoteAddress());
                 }
             } else if (key.isReadable()) {
                 client = (SocketChannel) key.channel();
@@ -93,7 +93,7 @@ public class Server {
         int bytesRead = channel.read(buf);
         // 如果读取到-1，则说明客户端关闭了该链接
         if (bytesRead == -1) {
-            log.info("{} closed", channel);
+            log.info("Close channel {}", channel.getRemoteAddress());
             channel.close();
             return;
         }
@@ -131,6 +131,7 @@ public class Server {
 
         String url = httpRequest.getUrl();
         RequestMethod requestMethod = httpRequest.getRequestMethod();
+        log.info("{} {}", requestMethod, url);
         MethodDetail methodDetail = UrlMappings.getInstance().getMap(url, requestMethod);
 
         // 如果找不到对应的匹配规则

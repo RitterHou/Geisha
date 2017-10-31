@@ -5,7 +5,7 @@
     <property scope="context" name="APP_PATTERN"
               value='%d{yyyy-MM-dd HH:mm:ss.SSS}|%level|%M|0|%thread|%replace(%.-1000msg){"(\r|\n)","\t"}|"%.-2000ex{full}"%n'/>
     <property scope="context" name="CONSOLE_PATTERN"
-              value='%d{yyyy-MM-dd HH:mm:ss.SSS}-[%thread]-[%level]-%C\:%M:%L-%msg %ex{full}%n'/>
+              value='%d{yyyy-MM-dd HH:mm:ss:SSS} %highlight(%-5p) --- [%15t] %cyan(%-20c{20}) : %m%n'/>
 
     <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
         <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
