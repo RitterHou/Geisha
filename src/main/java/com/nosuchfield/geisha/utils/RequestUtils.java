@@ -2,177 +2,104 @@ package com.nosuchfield.geisha.utils;
 
 import com.nosuchfield.geisha.mvc.beans.HttpRequest;
 import com.nosuchfield.geisha.mvc.enums.RequestMethod;
+import lombok.extern.slf4j.Slf4j;
 
-import java.io.*;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * 解析HTTP请求
  *
  * @author hourui 2017/10/27 21:23
  */
+@Slf4j
 public class RequestUtils {
 
     public static HttpRequest getRequest(String request) {
-        InputStream inputStream = new ByteArrayInputStream(request.getBytes());
-        HttpParser parser = new HttpParser(inputStream);
+        HttpParser parser = new HttpParser(request);
         try {
-            parser.parseRequest();
+            int status = parser.parseRequest();
+            if (status != 200) {
+                log.error("error in parsing [{}]", request);
+                throw new RuntimeException("Error");
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }
 
-        Map<String, String> headers = parser.getHeaders();
-        String method = parser.getMethod();
-        Map<String, String> params = parser.getParams();
-        String url = parser.getRequestURL();
-
-        return HttpRequest.builder()
-                .url(url)
-                .requestMethod(RequestMethod.getEnum(method.toLowerCase()))
-                .headers(headers)
-                .params(params)
-                .build();
+        return parser.getHttpRequest();
     }
 
     static class HttpParser {
-        private BufferedReader reader;
-        private String method, url;
-        private Map<String, String> headers, params;
-        private int[] ver;
+        private String[] request;
+        private HttpRequest httpRequest;
 
-        public HttpParser(InputStream is) {
-            reader = new BufferedReader(new InputStreamReader(is));
-            method = "";
-            url = "";
-            headers = new ConcurrentHashMap<>();
-            params = new ConcurrentHashMap<>();
-            ver = new int[2];
+        public HttpParser(String request) {
+            this.request = request.split(System.getProperty("line.separator"));
+            httpRequest = new HttpRequest();
         }
 
-        public int parseRequest() throws IOException {
-            String initial, prms[], cmd[], temp[];
-            int ret, idx, i;
+        public int parseRequest() throws UnsupportedEncodingException {
+            String initial = request[0]; // 请求的第一行
+            if (initial == null || initial.length() == 0 || Character.isWhitespace(initial.charAt(0))) return 400;
 
-            ret = 200; // default is OK now
-            initial = reader.readLine();
-            if (initial == null || initial.length() == 0) return 0;
-            if (Character.isWhitespace(initial.charAt(0))) {
-                // starting whitespace, return bad request
-                return 400;
-            }
+            String[] commands = initial.split("\\s");
+            if (commands.length != 3) return 400;
 
-            cmd = initial.split("\\s");
-            if (cmd.length != 3) {
-                return 400;
-            }
+            RequestMethod method = RequestMethod.getEnum(commands[0]);
+            if (method == null) return 400;
 
-            if (cmd[2].indexOf("HTTP/") == 0 && cmd[2].indexOf('.') > 5) {
-                temp = cmd[2].substring(5).split("\\.");
-                try {
-                    ver[0] = Integer.parseInt(temp[0]);
-                    ver[1] = Integer.parseInt(temp[1]);
-                } catch (NumberFormatException nfe) {
-                    ret = 400;
-                }
-            } else ret = 400;
+            String url = commands[1];
+            String version = commands[2];
+            Map<String, String> params = new HashMap<>();
+            Map<String, String> headers = new HashMap<>();
+            Map<String, String> data = new HashMap<>();
 
-            if (cmd[0].equals("GET") || cmd[0].equals("HEAD")) {
-                method = cmd[0];
+            // 获取url上面的参数
+            int idx = url.indexOf('?');
+            if (idx > 0) {
+                String[] paramsArray = url.substring(idx + 1).split("&");
+                url = URLDecoder.decode(url.substring(0, idx), Constants.DEFAULT_ENCODING);
 
-                idx = cmd[1].indexOf('?');
-                if (idx < 0) url = cmd[1];
-                else {
-                    url = URLDecoder.decode(cmd[1].substring(0, idx), Constants.DEFAULT_ENCODING);
-                    prms = cmd[1].substring(idx + 1).split("&");
-
-                    params = new Hashtable();
-                    for (i = 0; i < prms.length; i++) {
-                        temp = prms[i].split("=");
-                        if (temp.length == 2) {
-                            // we use ISO-8859-1 as temporary charset and then
-                            // String.getBytes(Constants.DEFAULT_ENCODING) to get the data
-                            params.put(URLDecoder.decode(temp[0], Constants.DEFAULT_ENCODING),
-                                    URLDecoder.decode(temp[1], Constants.DEFAULT_ENCODING));
-                        } else if (temp.length == 1 && prms[i].indexOf('=') == prms[i].length() - 1) {
-                            // handle empty string separatedly
-                            params.put(URLDecoder.decode(temp[0], Constants.DEFAULT_ENCODING), "");
-                        }
+                for (String param : paramsArray) {
+                    String[] tmp = param.split("=");
+                    if (tmp.length == 2) {
+                        params.put(URLDecoder.decode(tmp[0], Constants.DEFAULT_ENCODING),
+                                URLDecoder.decode(tmp[1], Constants.DEFAULT_ENCODING));
                     }
                 }
-                parseHeaders();
-                if (headers == null) ret = 400;
-            } else if (cmd[0].equals("POST")) {
-                ret = 501; // not implemented
-            } else if (ver[0] == 1 && ver[1] >= 1) {
-                if (cmd[0].equals("OPTIONS") ||
-                        cmd[0].equals("PUT") ||
-                        cmd[0].equals("DELETE") ||
-                        cmd[0].equals("TRACE") ||
-                        cmd[0].equals("CONNECT")) {
-                    ret = 501; // not implemented
-                }
-            } else {
-                // meh not understand, bad request
-                ret = 400;
             }
 
-            if (ver[0] == 1 && ver[1] >= 1 && getHeader("Host") == null) {
-                ret = 400;
-            }
-
-            return ret;
-        }
-
-        private void parseHeaders() throws IOException {
-            String line;
-            int idx;
-
-            // that fscking rfc822 allows multiple lines, we don't care now
-            line = reader.readLine();
-            while (!line.equals("")) {
-                idx = line.indexOf(':');
-                if (idx < 0) {
-                    headers = null;
+            // 获取header
+            for (int i = 1; i < request.length; i++) {
+                if (request[i].equals(Constants.CRLF))
                     break;
-                } else {
-                    headers.put(line.substring(0, idx).toLowerCase(), line.substring(idx + 1).trim());
-                }
-                line = reader.readLine();
+                String line = request[i];
+                String[] map = line.split(":");
+                if (map.length == 2)
+                    headers.put(map[0].trim().toLowerCase(), map[1].trim());
             }
+
+            // 获取HTTP body中的参数，GET和HEAD方法没有body
+            if (method == RequestMethod.POST || method == RequestMethod.PUT || method == RequestMethod.DELETE) {
+
+            }
+
+            httpRequest.setRequestMethod(method);
+            httpRequest.setUrl(url);
+            httpRequest.setVersion(version);
+            params.putAll(data); // 把data添加到params中
+            httpRequest.setParams(params);
+            httpRequest.setHeaders(headers);
+
+            return 200;
         }
 
-        public String getMethod() {
-            return method;
-        }
-
-        public String getHeader(String key) {
-            if (headers != null)
-                return (String) headers.get(key.toLowerCase());
-            else return null;
-        }
-
-        public Map<String, String> getHeaders() {
-            return headers;
-        }
-
-        public String getRequestURL() {
-            return url;
-        }
-
-        public String getParam(String key) {
-            return (String) params.get(key);
-        }
-
-        public Map<String, String> getParams() {
-            return params;
-        }
-
-        public String getVersion() {
-            return ver[0] + "." + ver[1];
+        public HttpRequest getHttpRequest() {
+            return httpRequest;
         }
 
     }

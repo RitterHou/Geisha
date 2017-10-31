@@ -1,8 +1,8 @@
 package com.nosuchfield.geisha.mvc.beans;
 
 import com.nosuchfield.geisha.mvc.enums.RequestMethod;
-import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.Map;
@@ -12,13 +12,14 @@ import java.util.Map;
  */
 @Setter
 @Getter
-@Builder
+@NoArgsConstructor
 public class HttpRequest {
 
     private RequestMethod requestMethod;
     private String url;
-    private Map<String, String> params;
     private Map<String, String> headers;
+    private Map<String, String> params;
+    private String version;
 
     @Override
     public String toString() {

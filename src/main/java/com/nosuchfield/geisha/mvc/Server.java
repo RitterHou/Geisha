@@ -97,6 +97,9 @@ public class Server {
             channel.close();
             return;
         }
+        // 非阻塞IO可以读取0个字节，这种数据应该手动丢弃
+        if (bytesRead == 0) return;
+
         // 读取所有的数据
         while (bytesRead > 0) {
             buf.flip();

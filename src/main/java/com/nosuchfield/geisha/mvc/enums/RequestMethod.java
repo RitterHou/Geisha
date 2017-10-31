@@ -2,20 +2,20 @@ package com.nosuchfield.geisha.mvc.enums;
 
 public enum RequestMethod {
 
-    GET("get"),
+    GET("GET"),
 
-    HEAD("head"),
+    HEAD("HEAD"),
 
-    POST("post"),
+    POST("POST"),
 
-    PUT("put"),
+    PUT("PUT"),
 
-    DELETE("delete");
+    DELETE("DELETE");
 
     private String value;
 
     RequestMethod(String value) {
-        this.value = value;
+        this.value = value.toUpperCase();
     }
 
     public String getValue() {
@@ -24,7 +24,7 @@ public enum RequestMethod {
 
     public static RequestMethod getEnum(String value) {
         for (RequestMethod requestMethod : RequestMethod.values()) {
-            if (requestMethod.getValue().equals(value)) {
+            if (requestMethod.getValue().equals(value.toUpperCase())) {
                 return requestMethod;
             }
         }
