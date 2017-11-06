@@ -1,12 +1,14 @@
 package com.nosuchfield.geisha.mvc;
 
-import com.nosuchfield.geisha.mvc.beans.MethodDetail;
 import com.nosuchfield.geisha.mvc.enums.RequestMethod;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * 保存HTTP请求与Java方法的映射关系
+ */
 public class UrlMappings {
 
     private static UrlMappings urlMappings;

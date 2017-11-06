@@ -1,0 +1,2 @@
+server: jetty
+port: 8080

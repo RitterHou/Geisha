@@ -1,4 +1,4 @@
-package com.nosuchfield.geisha.mvc.beans;
+package com.nosuchfield.geisha.mvc.server.nio;
 
 import com.nosuchfield.geisha.mvc.enums.RequestMethod;
 import lombok.Getter;

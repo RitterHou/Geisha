@@ -9,7 +9,7 @@ import java.lang.reflect.Method;
 import java.util.List;
 
 @Slf4j
-public class Http {
+public class RequestScanner {
 
     /**
      * 初始化HTTP请求的映射

@@ -13,6 +13,8 @@ import java.lang.reflect.Method;
 import java.util.List;
 
 /**
+ * 实现依赖注入
+ *
  * @author hourui 2017/10/18 19:37
  */
 @Slf4j
@@ -20,7 +22,7 @@ public class Context {
 
     // 创建 -> 保存 -> 获取 -> 使用
 
-    public Context() throws IllegalAccessException, InstantiationException, InvocationTargetException {
+    public static void init() throws IllegalAccessException, InstantiationException, InvocationTargetException {
         List<Class> classes = PackageListUtils.getAllClass();
         // 扫描类并且创建bean，把bean保存到内存中
         for (Class clazz : classes) {
@@ -59,7 +61,7 @@ public class Context {
         }
     }
 
-    public Object getBean(Class clazz) {
+    public static Object getBean(Class clazz) {
         return Beans.getInstance().getObject(clazz);
     }
 

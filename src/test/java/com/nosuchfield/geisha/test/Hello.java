@@ -18,8 +18,8 @@ public class Hello {
     }
 
     @RequestMapping(value = "/person", method = RequestMethod.POST)
-    public String test() {
-        return "test";
+    public String test(@Param("name") String name) {
+        return "post " + name;
     }
 
 }

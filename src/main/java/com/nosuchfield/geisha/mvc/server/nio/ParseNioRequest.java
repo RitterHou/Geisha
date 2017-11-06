@@ -1,7 +1,7 @@
-package com.nosuchfield.geisha.utils;
+package com.nosuchfield.geisha.mvc.server.nio;
 
-import com.nosuchfield.geisha.mvc.beans.HttpRequest;
 import com.nosuchfield.geisha.mvc.enums.RequestMethod;
+import com.nosuchfield.geisha.utils.Constants;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
@@ -11,12 +11,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * 解析HTTP请求
+ * 解析NIO服务器的HTTP请求
  *
  * @author hourui 2017/10/27 21:23
  */
 @Slf4j
-public class RequestUtils {
+public class ParseNioRequest {
 
     public static HttpRequest getRequest(String request) {
         HttpParser parser = new HttpParser(request);

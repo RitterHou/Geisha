@@ -4,6 +4,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
+ * 保存所有的bean
+ *
  * @author hourui 2017/10/18 21:01
  */
 public class Beans {

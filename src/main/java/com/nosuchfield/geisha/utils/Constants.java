@@ -1,6 +1,8 @@
 package com.nosuchfield.geisha.utils;
 
 /**
+ * 常量信息
+ *
  * @author hourui 2017/10/27 23:07
  */
 public class Constants {

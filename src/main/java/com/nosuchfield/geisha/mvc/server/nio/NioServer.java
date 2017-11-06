@@ -1,13 +1,12 @@
-package com.nosuchfield.geisha.mvc;
+package com.nosuchfield.geisha.mvc.server.nio;
 
 import com.google.common.primitives.Bytes;
 import com.nosuchfield.geisha.ioc.Beans;
+import com.nosuchfield.geisha.mvc.MethodDetail;
+import com.nosuchfield.geisha.mvc.UrlMappings;
 import com.nosuchfield.geisha.mvc.annotations.Param;
-import com.nosuchfield.geisha.mvc.beans.HttpRequest;
-import com.nosuchfield.geisha.mvc.beans.MethodDetail;
 import com.nosuchfield.geisha.mvc.enums.RequestMethod;
 import com.nosuchfield.geisha.utils.Constants;
-import com.nosuchfield.geisha.utils.RequestUtils;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
@@ -32,16 +31,16 @@ import java.util.Map;
  * @author hourui 2017/10/27 21:04
  */
 @Slf4j
-public class Server {
+public class NioServer {
     private int port;
     private Selector selector;
 
     public static void start(int port) {
         new Thread(() -> {
             try {
-                Server server = new Server();
+                NioServer server = new NioServer();
                 server.port = port;
-                log.info("Server is running on http://127.0.0.1:{}", port);
+                log.info("NioServer is running on http://127.0.0.1:{}", port);
                 server.start();
             } catch (Exception e) {
                 e.printStackTrace();
@@ -127,7 +126,7 @@ public class Server {
      * 解析请求并返回响应
      */
     private void response(String request, SocketChannel channel) throws Exception {
-        HttpRequest httpRequest = RequestUtils.getRequest(request);
+        HttpRequest httpRequest = ParseNioRequest.getRequest(request);
 
         String url = httpRequest.getUrl();
         RequestMethod requestMethod = httpRequest.getRequestMethod();
