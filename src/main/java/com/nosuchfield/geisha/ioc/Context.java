@@ -28,7 +28,7 @@ public class Context {
         for (Class clazz : classes) {
             if (clazz.isAnnotationPresent(Component.class) || clazz.isAnnotationPresent(Configuration.class)) {
                 log.info("Created bean for [{}]", clazz);
-                Beans.getInstance().setObject(clazz, clazz.newInstance());
+                BeansPool.getInstance().setObject(clazz, clazz.newInstance());
             }
         }
         // 把用户自定义的Bean保存到内存中去
@@ -37,10 +37,10 @@ public class Context {
                 Method[] methods = clazz.getDeclaredMethods();
                 for (Method method : methods) {
                     if (method.isAnnotationPresent(Bean.class)) {
-                        Object classObject = Beans.getInstance().getObject(clazz);
+                        Object classObject = BeansPool.getInstance().getObject(clazz);
                         Object o = method.invoke(classObject); // 获取方法的返回值对象
                         log.info("Created bean for [{}] by method [{}]", o.getClass(), method);
-                        Beans.getInstance().setObject(o.getClass(), o);
+                        BeansPool.getInstance().setObject(o.getClass(), o);
                     }
                 }
             }
@@ -50,8 +50,8 @@ public class Context {
             Field[] fields = clazz.getDeclaredFields();
             for (Field field : fields) {
                 if (field.isAnnotationPresent(Resource.class)) {
-                    Object classObject = Beans.getInstance().getObject(clazz);
-                    Object fieldObject = Beans.getInstance().getObject(field.getType());
+                    Object classObject = BeansPool.getInstance().getObject(clazz);
+                    Object fieldObject = BeansPool.getInstance().getObject(field.getType());
 
                     field.setAccessible(true);
                     field.set(classObject, fieldObject);
@@ -62,7 +62,7 @@ public class Context {
     }
 
     public static Object getBean(Class clazz) {
-        return Beans.getInstance().getObject(clazz);
+        return BeansPool.getInstance().getObject(clazz);
     }
 
 }

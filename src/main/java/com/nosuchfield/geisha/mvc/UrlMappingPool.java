@@ -9,14 +9,14 @@ import java.util.List;
 /**
  * 保存HTTP请求与Java方法的映射关系
  */
-public class UrlMappings {
+public class UrlMappingPool {
 
-    private static UrlMappings urlMappings;
+    private static UrlMappingPool urlMappingPool;
 
-    public static UrlMappings getInstance() {
-        if (urlMappings == null)
-            urlMappings = new UrlMappings();
-        return urlMappings;
+    public static UrlMappingPool getInstance() {
+        if (urlMappingPool == null)
+            urlMappingPool = new UrlMappingPool();
+        return urlMappingPool;
     }
 
     private List<MethodDetail> methodDetails = new ArrayList<>();

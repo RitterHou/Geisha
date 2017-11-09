@@ -8,14 +8,14 @@ import java.util.Map;
  *
  * @author hourui 2017/10/18 21:01
  */
-public class Beans {
+public class BeansPool {
 
-    private static Beans beans;
+    private static BeansPool beansPool;
 
-    public static Beans getInstance() {
-        if (beans == null)
-            beans = new Beans();
-        return beans;
+    public static BeansPool getInstance() {
+        if (beansPool == null)
+            beansPool = new BeansPool();
+        return beansPool;
     }
 
     // 根据类型保存对象

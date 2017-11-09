@@ -1,9 +1,9 @@
 package com.nosuchfield.geisha.mvc.server.nio;
 
 import com.google.common.primitives.Bytes;
-import com.nosuchfield.geisha.ioc.Beans;
+import com.nosuchfield.geisha.ioc.BeansPool;
 import com.nosuchfield.geisha.mvc.MethodDetail;
-import com.nosuchfield.geisha.mvc.UrlMappings;
+import com.nosuchfield.geisha.mvc.UrlMappingPool;
 import com.nosuchfield.geisha.mvc.annotations.Param;
 import com.nosuchfield.geisha.mvc.enums.RequestMethod;
 import com.nosuchfield.geisha.utils.Constants;
@@ -131,7 +131,7 @@ public class NioServer {
         String url = httpRequest.getUrl();
         RequestMethod requestMethod = httpRequest.getRequestMethod();
         log.info("{} {}", requestMethod, url);
-        MethodDetail methodDetail = UrlMappings.getInstance().getMap(url, requestMethod);
+        MethodDetail methodDetail = UrlMappingPool.getInstance().getMap(url, requestMethod);
 
         // 如果找不到对应的匹配规则
         if (methodDetail == null) {
@@ -140,7 +140,7 @@ public class NioServer {
         }
 
         Class clazz = methodDetail.getClazz();
-        Object object = Beans.getInstance().getObject(clazz);
+        Object object = BeansPool.getInstance().getObject(clazz);
         if (object == null)
             throw new RuntimeException("can't find bean for " + clazz);
 

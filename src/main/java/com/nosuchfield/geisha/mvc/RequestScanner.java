@@ -33,7 +33,7 @@ public class RequestScanner {
 
                     methodUrl = classUrl == null ? methodUrl : classUrl + methodUrl;
                     log.info("Mapped URL [{} {}] onto handler of type [{}]", requestMethod.getValue(), methodUrl, method);
-                    UrlMappings.getInstance().setMap(methodUrl, clazz, method, requestMethod);
+                    UrlMappingPool.getInstance().setMap(methodUrl, clazz, method, requestMethod);
                 }
             }
         }
