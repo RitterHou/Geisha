@@ -2,6 +2,8 @@
 
 _Tiny Java MVC Framework._
 
+[> more detail](https://www.nosuchfield.com/2017/11/08/Geisha-Tiny-Java-MVC-Framework/)
+
 ## Requirements
 
 * Java8+
